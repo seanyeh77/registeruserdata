@@ -1,0 +1,87 @@
+﻿@model UserData
+@{
+    ViewData["Title"] = "Home Page";
+}
+<h1>註冊個人資料</h1>
+<hr />
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3 row">
+        <label for="inputID" class="col-sm-2 col-form-label">* ID</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.ID, new { htmlAttributes = new { @class = "form-control" ,@tpye = "text" ,@placeholder="666666" ,@id="inputID"} })
+            @Html.ValidationMessageFor(model => model.ID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputName" class="col-sm-2 col-form-label">* 中文姓名</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.ChineseName, new { htmlAttributes = new { @class = "form-control" ,@tpye = "text" ,@placeholder="王大明" ,@id="inputChinesseName"} })
+            @Html.ValidationMessageFor(model => model.ChineseName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputName" class="col-sm-2 col-form-label">* 英文姓名</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control" ,@tpye = "text" ,@placeholder="Candy" ,@id="inputEnglishName"} })
+            @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputGrade" class="col-sm-2 col-form-label" >年級</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.grade, new { htmlAttributes = new { @class="form-control" ,@type="text" ,@id="inputPassword" ,@placeholder=" 10   (高一)"} })
+            @Html.ValidationMessageFor(model => model.grade, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputGender" class="col-sm-2 col-form-label">* 性別</label>
+        <div class="col-sm-10">
+            @Html.DropDownListFor(
+            model => model.gender,
+            new SelectList(Enum.GetValues(typeof(Gender))),
+            new { @class="form-select" ,id="inputGroupSelect01" }
+            )
+            @Html.ValidationMessageFor(model => model.gender, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputEmail" class="col-sm-2 col-form-label">* Email</label>
+
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.email, new { htmlAttributes = new { @type="email" ,@class="form-control" ,@id="exampleFormControlInput1" ,@placeholder="name@example.com"} })
+            @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputPosition" class="col-sm-2 col-form-label">* 職位</label>
+        <div class="col-sm-10">
+            @Html.DropDownListFor(
+            model => model.position,
+            new SelectList(Enum.GetValues(typeof(Position))),
+            new { @class="form-select" ,id="inputGroupSelect02" }
+            )
+            @Html.ValidationMessageFor(model => model.position, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlTextarea1" class="form-label">* 個人資料</label>
+        @Html.TextAreaFor(model => model.view, new { @class="form-control" ,@id="exampleFormControlTextarea1" ,@rows="3" ,@placeholder="我的專長，目標等..." })
+        @Html.ValidationMessageFor(model => model.view, "", new { @class = "text-danger" })
+    </div>
+    <div class="mb-3">
+        <label for="formFile" class="form-label">* 臉部照片</label>
+        @Html.TextBoxFor(model => model.Image, "", new { @type="file" ,@class="form-control" ,@multiple = "multiple"})
+        @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+    </div>
+    <div class="text-end">
+        <button class="btn btn-primary" type="submit">建立</button>
+    </div>
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

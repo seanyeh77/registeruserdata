@@ -1,0 +1,165 @@
+﻿@model registeruserdata.Models.UserDataEdit
+
+@{
+    ViewData["Title"] = "EditUserdata";
+}
+
+<h1>修改個人資料</h1>
+<hr />
+@*<script src="face-api.js"></script>*@
+@*@section scripts{*@
+@*<script src="face-api.js"></script>*@
+@*    <script src="js/commons.js"></script>
+    <script src="js/faceDetectionControls.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>*@
+@*}*@
+<div class="mb-5 row">
+    <div class="col-sm-3 col-form-label">
+        <div id="webcam"></div>
+        <input class="btn btn-primary" type="button" id="btnCapture" value="查詢" />
+    </div>
+</div>
+
+@using (Html.BeginForm("EditUserdata", "EditUserdata", FormMethod.Post,  new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3 row">
+        <label for="inputid" class="col-sm-2 col-form-label">* ID</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.ID, new { htmlAttributes = new { @class = "form-control" ,@tpye = "text" ,@placeholder="666666" ,@id="inputid"} })
+            @Html.ValidationMessageFor(model => model.ID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputName" class="col-sm-2 col-form-label">* 中文姓名</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.ChineseName, new { htmlAttributes = new { @class = "form-control" ,@tpye = "text" ,@placeholder="王大明" ,@id="inputchinesename"} })
+            @Html.ValidationMessageFor(model => model.ChineseName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputName" class="col-sm-2 col-form-label">* 英文姓名</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control" ,@tpye = "text" ,@placeholder="Candy" ,@id="inputenglishname"} })
+            @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputgrade" class="col-sm-2 col-form-label">年級</label>
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.grade, new { htmlAttributes = new { @class="form-control" ,@type="text" ,@id="inputgrade" ,@placeholder=" 10   (高一)"} })
+            @Html.ValidationMessageFor(model => model.grade, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputgender" class="col-sm-2 col-form-label">* 性別</label>
+        <div class="col-sm-10">
+            @Html.DropDownListFor(
+        model => model.gender,
+        new SelectList(Enum.GetValues(typeof(Gender))),
+        new { @class="form-select" ,id="inputgender" }
+        )
+            @Html.ValidationMessageFor(model => model.gender, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputemail" class="col-sm-2 col-form-label">* Email</label>
+
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.email, new { htmlAttributes = new { @type="email" ,@class="form-control" ,@id="inputemail" ,@placeholder="name@example.com"} })
+            @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputposition" class="col-sm-2 col-form-label">* 職位</label>
+        <div class="col-sm-10">
+            @Html.DropDownListFor(
+        model => model.position,
+        new SelectList(Enum.GetValues(typeof(Position))),
+        new { @class="form-select" ,@id = "inputposition" }
+        )
+            @Html.ValidationMessageFor(model => model.position, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlTextarea1" class="form-label">* 個人資料</label>
+        @Html.TextAreaFor(model => model.view, new { @class="form-control" ,@id="inputview" ,@rows="3" ,@placeholder="我的專長，目標等..." })
+        @Html.ValidationMessageFor(model => model.view, "", new { @class = "text-danger" })
+    </div>
+    <div class="text-end">
+        <button class="btn btn-primary" type="submit">修改</button>
+    </div>
+}
+
+@section scripts
+    {
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="~/webcamjs/webcam.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            Webcam.set({
+                width: 320,
+                height: 240,
+                image_format: 'jpeg',
+                jpeg_quality: 90
+            });
+            Webcam.attach('#webcam');
+            $("#btnCapture").click(function () {
+                Webcam.snap(function (data_uri) {
+                    var data = new FormData();
+                    data.append("data", data_uri);
+                    $.ajax({
+                        type: "POST",
+                        url: "/EditUserdata/SaveCapture",
+                        data: data,
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            try {
+                                if (response == "people") {
+                                    alert("請前往註冊");
+                                }
+                                else if (response == "face") {
+                                    alert("影像辨識錯誤");
+                                }
+                                else if (response == "connet") {
+                                    alert("影像辨識發生錯誤");
+                                }
+                                else {
+                                    $.each(response, function (i, obj) {
+                                        i = i.toLowerCase()
+                                        if (i == "id") {
+                                            document.getElementById("input" + i).value = obj.toString().padStart(6, '0');
+                                        }
+                                        else if (i =="chinesename"){
+                                            document.getElementById("input" + i).value = obj;
+                                            alert("歡迎" + obj);
+                                        } else {
+                                            document.getElementById("input" + i).value = obj;
+                                        }
+                                    });
+                                }
+                                    
+                            }
+                            catch (e) {
+                                alert(response);
+                            }
+                        },
+                        Error: function (r) {
+                            alert(r);
+                            document.getElementById("inputid").value = "發生錯誤";
+                        }
+                    });
+                });
+            });
+            $("#btnUpload").click(function () {
+                
+            });
+        });
+    </script>
+}
