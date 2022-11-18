@@ -26,7 +26,7 @@ namespace registeruserdata.Models
         public string view { get; set; }
         [Required(ErrorMessage = "請上傳檔案")]
         [DataType(DataType.Upload)]
-        [MaxFileSize(4/3 * 1024 * 1024, ErrorMessage = "檔案大小不能超過4/3MB")]
+        [MaxFileSize(1 * 1024 * 1024, ErrorMessage = "檔案大小不能超過1MB")]
         [AllowedExtensions(new string[] { ".jpg", ".png", ".jpeg"}, ErrorMessage = "檔案類型只能為jpg,png,jpeg")]
         public List<IFormFile> Image { get; set; }
     }
@@ -39,7 +39,7 @@ namespace registeruserdata.Models
     public enum Position
     {
         成員,
-        教練,
+        老師,
         其他,
     }
 }

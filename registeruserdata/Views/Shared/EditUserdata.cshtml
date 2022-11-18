@@ -19,6 +19,11 @@
 <div class="mb-5 row">
     <div class="col-sm-3 col-form-label">
         <div id="webcam"></div>
+        <br />
+        <div>
+            <div style="color:red;" id="message"></div>
+        </div>
+        <br />
         <input class="btn btn-primary" type="button" id="btnCapture" value="查詢" />
     </div>
 </div>
@@ -90,8 +95,11 @@
         @Html.TextAreaFor(model => model.view, new { @class="form-control" ,@id="inputview" ,@rows="3" ,@placeholder="我的專長，目標等..." })
         @Html.ValidationMessageFor(model => model.view, "", new { @class = "text-danger" })
     </div>
+    <div>
+        <div style="color:red;" id="message2">@ViewBag.Message</div>
+    </div>
     <div class="text-end">
-        <button class="btn btn-primary" type="submit">修改</button>
+        <button class="btn btn-primary" type="submit" id="btnSubmit">修改</button>
     </div>
 }
 
@@ -121,30 +129,19 @@
                         processData: false,
                         success: function (response) {
                             try {
-                                if (response == "people") {
-                                    alert("請前往註冊");
-                                }
-                                else if (response == "face") {
-                                    alert("影像辨識錯誤");
-                                }
-                                else if (response == "connet") {
-                                    alert("影像辨識發生錯誤");
-                                }
-                                else {
-                                    $.each(response, function (i, obj) {
-                                        i = i.toLowerCase()
-                                        if (i == "id") {
-                                            document.getElementById("input" + i).value = obj.toString().padStart(6, '0');
-                                        }
-                                        else if (i =="chinesename"){
-                                            document.getElementById("input" + i).value = obj;
-                                            alert("歡迎" + obj);
-                                        } else {
-                                            document.getElementById("input" + i).value = obj;
-                                        }
+                                switch (response.state) {
+                                case 'err':
+                                    break;
+                                case 'ok':
+                                        $.each(response.data, function (_key, _value) {
+                                            _key = _key.toLowerCase()
+                                            document.getElementById("input" + _key).value = _value;
                                     });
+                                    break;
+                                default:
+                                    break;
                                 }
-                                    
+                                document.getElementById("message").textContent = response.message;
                             }
                             catch (e) {
                                 alert(response);
@@ -157,9 +154,14 @@
                     });
                 });
             });
-            $("#btnUpload").click(function () {
-                
+            $('#btnSubmit').click(function (e) {
+                $(this).prop('hidden', true);
+                document.getElementById("message2").textContent = "修改中，請稍後";
             });
+            //$('#myform').bind('invalid-form.validate', function () {
+            //    $('#btnSubmit').prop('hidden', false);
+            //        alert("false");
+            //});
         });
     </script>
 }

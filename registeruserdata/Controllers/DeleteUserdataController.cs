@@ -42,10 +42,26 @@ namespace registeruserdata.Controllers
             HttpResponseMessage response = await client.DeleteAsync("UserData/"+ ID);
             if (!response.IsSuccessStatusCode)
             {
-                return Ok(await response.Content.ReadAsStringAsync());
+                string err = await response.Content.ReadAsStringAsync();
+                string _message = "";
+                switch (err)
+                {
+                    case "lock":
+                        _message = "您已被鎖定，請聯絡管理員";
+                        break;
+                    case "ID":
+                        _message = "請前往註冊";
+                        break;
+                    default:
+                        _message = err;
+                        break;
+                }
+                ViewBag.Message = _message;
+                return View();
             }
             await DeleteUserdata();
             ModelState.Clear();
+            ViewBag.Message = "成功刪除";
             return View();
         }
         [HttpPost]
@@ -62,14 +78,35 @@ namespace registeruserdata.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 string err = await response.Content.ReadAsStringAsync();
-                return Json(err);
+                string _message = "";
+                switch (err)
+                {
+                    case "face":
+                        _message = "影像辨識錯誤";
+                        break;
+                    case "people":
+                        _message = "請前往註冊";
+                        break;
+                    case "connet":
+                        _message = "影像辨識時發生錯誤";
+                        break;
+                    default:
+                        _message= err;
+                        break;
+
+                }
+                return Json(new { state = "close", message = _message });
             }
             UserDataEdit userData = await response.Content.ReadFromJsonAsync<UserDataEdit>();
-            if (userData.position == "教練")
+            if (userData.position == "老師")
             {
-                return Json(userData.ChineseName);
+                return Json(new {state = "open", message = "歡迎 " + userData.ChineseName });
             }
-            return Json("position");
+            else
+            {
+                return Json(new { state = "close", message = "您不符合資格，請聯繫管理員"});
+            }
+            
         }
     }
 }

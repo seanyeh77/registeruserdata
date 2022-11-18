@@ -73,15 +73,28 @@
     </div>
     <div class="mb-3">
         <label for="formFile" class="form-label">* 臉部照片</label>
-        @Html.TextBoxFor(model => model.Image, "", new { @type="file" ,@class="form-control" ,@multiple = "multiple"})
+        @*@Html.TextBoxFor(model => model.Image, "", new { @type="file" ,@class="form-control" ,@multiple = "multiple"}) 兩個檔案*@
+        @Html.TextBoxFor(model => model.Image, "", new { @type="file" ,@class="form-control"})
         @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
     </div>
+    <div>
+        <div id="message"style="color:red;">@ViewBag.Message</div>
+    </div>
     <div class="text-end">
-        <button class="btn btn-primary" type="submit">建立</button>
+        <button id="btnSubmit" class="btn btn-primary" type="submit">建立</button>
     </div>
 }
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#btnSubmit').click(function (e) {
+            $(this).prop('hidden', true);
+            document.getElementById("message").textContent = "新增中，請稍後";
+        });
+        //$('#myform').bind('invalid-form.validate', function () {
+        //    $('#btnSubmit').prop('hidden', false);
+        //        alert("false");
+        //});
+    });
+    </script>
     }

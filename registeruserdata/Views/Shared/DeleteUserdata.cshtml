@@ -6,11 +6,17 @@
 
 <h1>刪除個人資料</h1>
 <hr />
-<h3>您確定要刪除個人資料嗎?</h3>
+<h3>驗證您的身分......</h3>
 <div class="mb-5 row">
     <div class="col-sm-6 col-form-label">
         <div id="webcam"></div>
-        <input class="btn btn-primary" type="button" id="btnCapture" value="截圖" />
+        <br />
+        <div>
+            <div style="color:red;" id="message"></div>
+        </div>
+        <br />
+        <input class="btn btn-primary" type="button" id="btnCapture" value="驗證" />
+
     </div>
 </div>
 @using (Html.BeginForm("DeleteUserdata", "DeleteUserdata", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -28,8 +34,11 @@
                 @Html.ValidationMessageFor(model => model.ID, "", new { @class = "text-danger" })
             </div>
         </div>
+        <div>
+            <div id="message2"style="color:red;">@ViewBag.Message</div>
+        </div>
         <form asp-action="Deleteuserdata">
-            <input type="submit" value="Delete" class="btn btn-danger" disabled="disabled" id="submit" />
+            <input type="submit" value="刪除" class="btn btn-danger" disabled="disabled" id="btnSubmit" />
         </form>
     </div>
 }
@@ -38,7 +47,7 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="~/webcamjs/webcam.js"></script>
     <script type="text/javascript">
-        $(function () {
+        $(document).ready(function () {
             Webcam.set({
                 width: 320,
                 height: 240,
@@ -58,31 +67,19 @@
                         contentType: false,
                         processData: false,
                         success: function (response) {
-                            if (response == "position") {
-                                document.getElementById("inputid").disabled = true;
-                                document.getElementById("submit").disabled = true;
-                                alert("您不符合資格，請聯繫管理員");
+                            switch (response.state) {
+                                case 'close':
+                                    document.getElementById("inputid").disabled = true;
+                                    document.getElementById("btnSubmit").disabled = true;
+                                    break;
+                                case 'open':
+                                    document.getElementById("inputid").disabled = false;
+                                    document.getElementById("btnSubmit").disabled = false;
+                                    break;
+                                default:
+                                    break;
                             }
-                            else if (response == "people") {
-                                document.getElementById("inputid").disabled = true;
-                                document.getElementById("submit").disabled = true;
-                                alert("請前往註冊");
-                            }
-                            else if (response == "face") {
-                                document.getElementById("inputid").disabled = true;
-                                document.getElementById("submit").disabled = true;
-                                alert("影像辨識錯誤");
-                            }
-                            else if (response == "connet") {
-                                document.getElementById("inputid").disabled = true;
-                                document.getElementById("submit").disabled = true;
-                                alert("影像辨識發生錯誤");
-                            }
-                            else {
-                                document.getElementById("inputid").disabled = false;
-                                document.getElementById("submit").disabled = false;
-                                alert("歡迎" + response);
-                            }
+                            document.getElementById("message").textContent = response.message;
                         },
                         Error: function (data) {
                             alert(data);
@@ -90,6 +87,14 @@
                     });
                 });
             });
+            $('#btnSubmit').click(function (e) {
+                $(this).prop('hidden', true);
+                document.getElementById("message2").textContent = "刪除中，請稍後";
+            });
+            //$('#myform').bind('invalid-form.validate', function () {
+            //    $('#btnSubmit').prop('hidden', false);
+            //        alert("false");
+            //});
         });
     </script>
 }
