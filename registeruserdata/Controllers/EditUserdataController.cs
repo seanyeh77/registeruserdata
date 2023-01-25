@@ -30,14 +30,14 @@ namespace registeruserdata.Controllers
                 }
                 // The uploaded image corresponds to our business rules => process it
                 var formdata = new MultipartFormDataContent();
-                formdata.Add(new StringContent(userdata.ID.ToString()), "userdata.ID");
-                formdata.Add(new StringContent(userdata.ChineseName), "userdata.ChineseName");
-                formdata.Add(new StringContent(userdata.EnglishName), "userdata.EnglishName");
-                formdata.Add(new StringContent(userdata.gender), "userdata.gender");
-                formdata.Add(new StringContent(userdata.grade.ToString()), "userdata.grade");
-                formdata.Add(new StringContent(userdata.position), "userdata.position");
-                formdata.Add(new StringContent(userdata.email), "userdata.email");
-                formdata.Add(new StringContent(userdata.view), "userdata.view");
+                formdata.Add(new StringContent(userdata.ID.ToString()), "ID");
+                formdata.Add(new StringContent(userdata.ChineseName), "ChineseName");
+                formdata.Add(new StringContent(userdata.EnglishName), "EnglishName");
+                formdata.Add(new StringContent(userdata.gender), "gender");
+                formdata.Add(new StringContent(userdata.grade.ToString()), "grade");
+                formdata.Add(new StringContent(userdata.position), "position");
+                formdata.Add(new StringContent(userdata.email), "email");
+                formdata.Add(new StringContent(userdata.view), "view");
                 HttpResponseMessage response = await client.PutAsync("UserData", formdata);
                 string str = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)

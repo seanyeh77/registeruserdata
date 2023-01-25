@@ -86,15 +86,9 @@
 }
 @section Scripts {
     <script type="text/javascript">
-    $(document).ready(function () {
-        $('#btnSubmit').click(function (e) {
-            $(this).prop('hidden', true);
+        $("form").submit(function (event) {
+            $('#btnSubmit').prop('disabled', true);
             document.getElementById("message").textContent = "新增中，請稍後";
-        });
-        //$('#myform').bind('invalid-form.validate', function () {
-        //    $('#btnSubmit').prop('hidden', false);
-        //        alert("false");
-        //});
     });
     </script>
     }

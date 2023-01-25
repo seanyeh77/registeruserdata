@@ -38,7 +38,7 @@ namespace registeruserdata.Models
     }
     public enum Position
     {
-        成員,
+        學生,
         老師,
         其他,
     }

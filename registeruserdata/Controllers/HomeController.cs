@@ -18,7 +18,6 @@ namespace registeruserdata.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
-        //public static HttpClient client = new HttpClient() { BaseAddress = new Uri("https://localhost:7021/") };
         public static HttpClient client = new HttpClient();
         public static List<UserData> result = new List<UserData>();
         public static UserData userdata = new UserData();
@@ -41,12 +40,12 @@ namespace registeruserdata.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return View(userdata);
+                    ViewBag.Message= ModelState.ToString();
+                    return View();
                 }
                 List<MemoryStream> MemoryStream_img = new List<MemoryStream>();
                 foreach (IFormFile img in userdata.Image)
                 {
-                    Stream stream = img.OpenReadStream();
                     MemoryStream memoryStream = new MemoryStream();
                     var k = GetPicThumbnail(img.OpenReadStream(), 0, 0, 70, memoryStream);
                     if (!k)
@@ -57,17 +56,17 @@ namespace registeruserdata.Controllers
                 }
                 // The uploaded image corresponds to our business rules => process it
                 var formdata = new MultipartFormDataContent();
-                formdata.Add(new StringContent(userdata.ID.ToString()), "userdata.ID");
-                formdata.Add(new StringContent(userdata.ChineseName), "userdata.ChineseName");
-                formdata.Add(new StringContent(userdata.EnglishName), "userdata.EnglishName");
-                formdata.Add(new StringContent(userdata.gender), "userdata.gender");
-                formdata.Add(new StringContent(userdata.grade.ToString()), "userdata.grade");
-                formdata.Add(new StringContent(userdata.position), "userdata.position");
-                formdata.Add(new StringContent(userdata.email), "userdata.email");
-                formdata.Add(new StringContent(userdata.view), "userdata.view");
+                formdata.Add(new StringContent(userdata.ID.ToString()), "ID");
+                formdata.Add(new StringContent(userdata.ChineseName), "ChineseName");
+                formdata.Add(new StringContent(userdata.EnglishName), "EnglishName");
+                formdata.Add(new StringContent(userdata.gender), "gender");
+                formdata.Add(new StringContent(userdata.grade.ToString()), "grade");
+                formdata.Add(new StringContent(userdata.position), "position");
+                formdata.Add(new StringContent(userdata.email), "email");
+                formdata.Add(new StringContent(userdata.view), "view");
                 foreach (MemoryStream img in MemoryStream_img)
                 {
-                    formdata.Add(new ByteArrayContent(img.ToArray()), "userdata.Image", "img");
+                    formdata.Add(new ByteArrayContent(img.ToArray()), "Image", "img");
                 }
                 HttpResponseMessage response = await client.PostAsync("UserData", formdata);
                 if (!response.IsSuccessStatusCode)
